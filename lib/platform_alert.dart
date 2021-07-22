@@ -5,7 +5,8 @@ class PlatformAlert {
   final String title;
   final String message;
 
-  const PlatformAlert({@required this.title, @required this.message})
+  const PlatformAlert({this.title, this.message})
+      // ignore: unnecessary_null_comparison
       : assert(title != null),
         assert(message != null);
   void show(BuildContext context) {

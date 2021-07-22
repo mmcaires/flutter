@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'stopwatch.dart';
+import './stopwatch.dart';
 
 class LoginScreen extends StatefulWidget {
   static const route = '/login';
@@ -8,7 +8,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String? name;
+  String name ='';
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -37,14 +37,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _nameController,
                   decoration: InputDecoration(labelText: 'Runner'),
                   validator: (text) =>
-                      text!.isEmpty ? 'Enter the runner\'s name.' : null,
+                      text.isEmpty ? 'Enter the runner\'s name.' : null,
                 ),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(labelText: 'Email'),
                   validator: (text) {
-                    if (text!.isEmpty) {
+                    if (text.isEmpty) {
                       return 'Enter the runner\'s email.';
                     }
 
@@ -67,11 +67,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _validate() {
     final form = _formKey.currentState;
-    if (!form.validate()) {
+    if (form.validate()) {
       return;
     }
     final name = _nameController.text;
-    final email = _emailController.text;
+    final String email = _emailController.text;
 
     Navigator.of(context).pushReplacementNamed(
       StopWatch.route,
