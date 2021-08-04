@@ -52,18 +52,12 @@ class StopWatchState extends State<StopWatch> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            'Lap ${laps.length + 1}',
-            style: Theme.of(context)
-                .textTheme
-                .subtitle1
-                .copyWith(color: Colors.white),
+            'Volta ${laps.length + 1}',
+            style: Theme.of(context).textTheme.subtitle1.copyWith(color: Colors.white),
           ),
           Text(
             _secondsText(milliseconds),
-            style: Theme.of(context)
-                .textTheme
-                .headline5
-                .copyWith(color: Colors.white),
+            style: Theme.of(context).textTheme.headline5.copyWith(color: Colors.white),
           ),
           SizedBox(height: 20),
           _buildControls()
@@ -81,16 +75,25 @@ class StopWatchState extends State<StopWatch> {
             backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
-          child: Text('Start'),
-          onPressed: isTicking ? null : _startTimer,
+          child: Text('Iniciar'),
+          onPressed: isTicking ? null : _iniciar,
         ),
         SizedBox(width: 20),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.yellow),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.indigo),
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
-          child: Text('Lap'),
-          onPressed: isTicking ? _lap : null,
+          child: Text('Volta'),
+          onPressed: isTicking ? _volta: null,
+        ),
+        SizedBox(width: 20),
+        ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.orange),
+          ),
+          child: Text('Reiniciar'),
+          onPressed: !isTicking ? () => _restaurar() : null,
         ),
         SizedBox(width: 20),
         Builder(
@@ -99,15 +102,30 @@ class StopWatchState extends State<StopWatch> {
               backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
               foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
             ),
-            child: Text('Stop'),
-            onPressed: isTicking ? () => _stopTimer(context) : null,
+            child: Text('Parar'),
+            onPressed: isTicking ? () => _parar(context) : null,
           ),
         ),
       ],
     );
   }
 
-  void _startTimer() {
+  void _restaurar() {
+    timer.cancel();
+    scrollController.animateTo(
+      0,
+      duration: Duration(milliseconds: 100),
+      curve: Curves.easeIn,
+    );
+    setState(() {
+      laps.clear();
+      isTicking = false;
+      milliseconds = 0;
+      seconds = 0;
+    });
+  }
+
+  void _iniciar() {
     timer = Timer.periodic(Duration(milliseconds: 100), _onTick);
     setState(() {
       laps.clear();
@@ -115,7 +133,7 @@ class StopWatchState extends State<StopWatch> {
     });
   }
 
-  void _stopTimer(BuildContext context) {
+  void _parar(BuildContext context) {
     timer.cancel();
     setState(() {
       isTicking = false;
@@ -126,8 +144,7 @@ class StopWatchState extends State<StopWatch> {
     //   message: 'Total Run Time is ${_secondsText(totalRuntime)}.',
     // );
     // alert.show(context);
-    final controller =
-        showBottomSheet(context: context, builder: _buildRunCompleteSheet);
+    final controller = showBottomSheet(context: context, builder: _buildRunCompleteSheet);
 
     Future.delayed(Duration(seconds: 5)).then((_) {
       controller.close();
@@ -136,10 +153,10 @@ class StopWatchState extends State<StopWatch> {
 
   String _secondsText(int milliseconds) {
     final seconds = milliseconds / 1000;
-    return '$seconds seconds';
+    return '$seconds segundos';
   }
 
-  void _lap() {
+  void _volta() {
     scrollController.animateTo(
       itemHeight * laps.length,
       duration: Duration(milliseconds: 500),
@@ -161,7 +178,7 @@ class StopWatchState extends State<StopWatch> {
           final milliseconds = laps[index];
           return ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 50),
-            title: Text('Lap ${index + 1}'),
+            title: Text('Volta ${index + 1}'),
             trailing: Text(_secondsText(milliseconds)),
           );
         },
@@ -186,8 +203,8 @@ class StopWatchState extends State<StopWatch> {
       child: Padding(
           padding: EdgeInsets.symmetric(vertical: 30.0),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Text('Run Finished!', style: textTheme.headline6),
-            Text('Total Run Time is ${_secondsText(totalRuntime)}.')
+            Text('Execução finalizada!', style: textTheme.headline6),
+            Text('Tempo total de execução: ${_secondsText(totalRuntime)}.')
           ])),
     ));
   }
